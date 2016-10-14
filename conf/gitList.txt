@@ -1,2 +1,1 @@
-https://github.com/phnmnl/phenomenal-h2020.wiki.git
-https://github.com/phnmnl/ipo_docker.wiki.git
+https://github.com/phnmnl/docker-rnmr.git

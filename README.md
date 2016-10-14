@@ -1,5 +1,5 @@
-#Federated Git Wiki
-Version 0.3
+#App Library Backend
+Version 0.1
 
 #Installation
 Make sure Python is install in the unix based system.
