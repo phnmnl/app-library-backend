@@ -41,7 +41,7 @@ function getAllApp(){
     $json['data'] = [];
 
     foreach ($data['data'] as $appName){
-        $appName = substr($appName, 7); //always prefix with 'docker-'
+        $appName = substr($appName, 10); //always prefix with 'container-'
 
         $json['data'][] = getApp($appName);
     }
@@ -69,7 +69,7 @@ function getAppWithTechnology($technology) {
     $client = explode(" ", strtoupper($technology));
 
     foreach ($data['data'] as $appName){
-        $appName = substr($appName, 7); //always prefix with 'docker-'
+        $appName = substr($appName, 10); //always prefix with 'container-'
 
         $app = getApp($appName);
 
@@ -109,11 +109,11 @@ function getAppWithResponse($appName) {
 
 function getApp($appName){
     global $path;
-    $imagePath = "http://".gethostname()."/app-library-backend/wiki-markdown/docker-".$appName."/";
+    $imagePath = "http://".gethostname()."/app-library-backend/wiki-markdown/container-".$appName."/";
 
     $name = $appName;
 
-    $readmePath = $path."/"."docker-".$name."/"."README.html";
+    $readmePath = $path."/"."container-".$name."/"."README.html";
 
     $html = file_get_html($readmePath) or die(json_encode(createEmptyJSONDataArray()));
 
@@ -132,6 +132,7 @@ function getApp($appName){
     $technology = [];
     $contributor = [];
     $analysis = [];
+    $gitRepo = [];
 
     foreach($html->find('h1') as $element){
         $title = $element->plaintext;
@@ -234,9 +235,6 @@ function getApp($appName){
                     $i++;
                 }
             }
-
-
-
         }
 
         if($element->plaintext == "Tool Authors"){
@@ -273,7 +271,18 @@ function getApp($appName){
                     $i++;
                 }
             }
+        }
 
+        if($element->plaintext == "Git Repository"){
+            $element = skipComment($element, "ul");
+
+            if($element->next_sibling()->tag == "ul"){
+                $i = 0;
+                while($element->next_sibling()->children($i)->tag == "li") {
+                    $gitRepo[] = $element->next_sibling()->children($i)->plaintext;
+                    $i++;
+                }
+            }
         }
 
         if($element->plaintext == "Usage Instructions"){
@@ -316,6 +325,7 @@ function getApp($appName){
     $item['technologies'] = $technology;
     $item['contributors'] = $contributor;
     $item['analysis']= $analysis;
+    $item['git_repo'] = $gitRepo;
 
 
     $json['data'][] = $item;

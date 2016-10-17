@@ -47,6 +47,7 @@ function getAppDBApp($id){
             $item['technologies'] = [];
             $item['contributors'] = [];
             $item['analysis'] =[];
+            $item['git_repo'] = [];
         }
 
     }

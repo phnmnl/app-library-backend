@@ -1,1 +1,1 @@
-https://github.com/phnmnl/docker-rnmr.git
+https://github.com/phnmnl/container-rnmr.git

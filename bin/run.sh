@@ -14,7 +14,7 @@ echo $gitList
 
 while IFS= read line
 do
-    git clone -b develop "$line"
+    git clone "$line"
 done <"$gitList"
 
 for dir in `ls ./`;
