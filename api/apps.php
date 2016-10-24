@@ -18,8 +18,12 @@ switch($_SERVER['REQUEST_METHOD']) {
 
         if(isset($_GET['app']) && $_GET['app'] != "") {
             getAppWithResponse($_GET['app']);
-        }  else if(isset($_GET['technology']) && $_GET['technology'] != ""){
-            getAppWithTechnology($_GET['technology']);
+        }  else if(
+               (isset($_GET['functionality']) && $_GET['functionality'] != "")
+            || (isset($_GET['approaches']) && $_GET['approaches'] != "")
+            || (isset($_GET['instrument']) && $_GET['instrument'] != "")
+        ){
+            getAppWithTechnology($_GET['functionality'], $_GET['approaches'], $_GET['instrument']);
         } else {
             getAllApp();
         }
@@ -46,15 +50,15 @@ function getAllApp(){
         $json['data'][] = getApp($appName);
     }
 
-    foreach (getAllAppDBId() as $appName){
-        $json['data'][] = getAppDBApp($appName);
-    }
+//    foreach (getAllAppDBId() as $appName){
+//        $json['data'][] = getAppDBApp($appName);
+//    }
 
     header('Content-Type: application/json');
     echo json_encode($json);
 }
 
-function getAppWithTechnology($technology) {
+function getAppWithTechnology($technology, $approaches, $instrument) {
     global $path;
 
     $dir = $path;
@@ -66,31 +70,70 @@ function getAppWithTechnology($technology) {
     $json['result'] = 1;
     $json['data'] = [];
 
-    $client = explode(" ", strtoupper($technology));
+    if($technology == ""){
+        $client1 = [];
+    } else {
+        $client1 = explode(" ", strtoupper($technology));
+    }
+
+
+    if($approaches == ""){
+        $client2 = [];
+    } else {
+        $client2 = explode(" ", strtoupper($approaches));
+    }
+
+    if($instrument == ""){
+        $client3 = [];
+    } else {
+        $client3 = explode(" ", strtoupper($instrument));
+    }
 
     foreach ($data['data'] as $appName){
         $appName = substr($appName, 10); //always prefix with 'container-'
 
         $app = getApp($appName);
 
-        $server = array_unique(array_merge($app['technologies'], $app['analysis']));
+//        $server = array_unique(array_merge($app['functionality'], $app['approaches'], $app['instrument']));
+        $server1 = array_unique($app['functionality']);
+        $server2 = array_unique($app['approaches']);
+        $server3 = array_unique($app['instrument']);
 
-        $result = array_intersect($client, $server);
-        if(sizeof($result) > 0){
+        //print_r(sizeof($client2));
+
+        if(!empty($client1)){
+            $result1 = array_intersect($client1, $server1);
+        } else {
+            $result1 = $server1;
+        }
+
+        if(!empty($client2)){
+            $result2 = array_intersect($client2, $server2);
+        } else {
+            $result2 = $server2;
+        }
+
+        if(!empty($client3)){
+            $result3 = array_intersect($client3, $server3);
+        } else {
+            $result3 = $server3;
+        }
+
+        if(sizeof($result1) > 0 && sizeof($result2) > 0 && sizeof($result3) > 0){
             $json['data'][] = $app;
         }
     }
 
-    foreach (getAllAppDBId() as $appName){
-
-        $app = getAppDBApp($appName);
-        $server = array_unique(array_merge($app['technologies'], $app['analysis']));
-
-        $result = array_intersect($client, $server);
-        if(sizeof($result) > 0){
-            $json['data'][] = $app;
-        }
-    }
+//    foreach (getAllAppDBId() as $appName){
+//
+//        $app = getAppDBApp($appName);
+//        $server = array_unique(array_merge($app['technologies'], $app['analysis']));
+//
+//        $result = array_intersect($client, $server);
+//        if(sizeof($result) > 0){
+//            $json['data'][] = $app;
+//        }
+//    }
 
     header('Content-Type: application/json');
     echo json_encode($json);
@@ -109,7 +152,8 @@ function getAppWithResponse($appName) {
 
 function getApp($appName){
     global $path;
-    $imagePath = "http://".gethostname()."/app-library-backend/wiki-markdown/container-".$appName."/";
+    $host = "http://".gethostname()."/app-library-backend/";
+    $imagePath = $host."wiki-markdown/container-".$appName."/";
 
     $name = $appName;
 
@@ -129,14 +173,18 @@ function getApp($appName){
     $website = [];
     $instructions = "";
     $installation = "";
-    $technology = [];
+    $functionality = [];
     $contributor = [];
-    $analysis = [];
+    $approaches = [];
+    $instrument = [];
     $gitRepo = [];
 
     foreach($html->find('h1') as $element){
         $title = $element->plaintext;
-        $version = $element->next_sibling()->plaintext;
+
+        if($element->next_sibling()->tag != "h2"){
+            $version = $element->next_sibling()->plaintext;
+        }
         break;
     }
 
@@ -160,7 +208,7 @@ function getApp($appName){
 
 
     foreach($html->find('h2') as $element){
-        if($element->plaintext == "Short description"){
+        if($element->plaintext == "Short description" || $element->plaintext == "Short Description"){
 
             $element = skipComment($element, "p");
 
@@ -185,6 +233,7 @@ function getApp($appName){
 
         if($element->plaintext == "Key features"){
 
+//            $element = skipComment($element, "p");
             $element = skipComment($element, "ul");
 
             if( $element->next_sibling()->tag == "ul"){
@@ -198,27 +247,65 @@ function getApp($appName){
         }
 
 
-        if($element->plaintext == "Metabolomics Technologies"){
+        if($element->plaintext == "Functionality"){
 
             $element = skipComment($element, "ul");
 
             if( $element->next_sibling()->tag == "ul"){
                 $i = 0;
                 while($element->next_sibling()->children($i)->tag == "li") {
-                    $technology[] = strtoupper($element->next_sibling()->children($i)->plaintext);
+
+//                    $temp = $element->next_sibling()->children($i)->plaintext;
+                    $temp = explode("/", strtoupper($element->next_sibling()->children($i)->plaintext));
+
+//                    foreach($temp as $v) {
+//                        $functionality[] = trim($v);
+//                        $functionality[] = "/";
+//                    }
+
+                    $functionality[] = trim($temp[sizeof($temp) - 1]);
+//                    $temp = preg_replace('/\s+/', '', $temp);
+//                    $functionality[] = $temp;
                     $i++;
                 }
             }
         }
 
-        if($element->plaintext == "Data Analysis"){
+        if($element->plaintext == "Approaches"){
 
             $element = skipComment($element, "ul");
 
             if( $element->next_sibling()->tag == "ul"){
                 $i = 0;
                 while($element->next_sibling()->children($i)->tag == "li") {
-                    $analysis[] = strtoupper($element->next_sibling()->children($i)->plaintext);
+                    $temp = explode("/", strtoupper($element->next_sibling()->children($i)->plaintext));
+
+//                    foreach($temp as $v) {
+//                        $approaches[] = trim($v);
+//                    }
+
+                    $approaches[] = trim($temp[sizeof($temp) - 1]);
+
+                    $i++;
+                }
+            }
+        }
+
+        if($element->plaintext == "Instrument Data Types"){
+
+            $element = skipComment($element, "ul");
+
+            if( $element->next_sibling()->tag == "ul"){
+                $i = 0;
+                while($element->next_sibling()->children($i)->tag == "li") {
+                    $temp = explode("/", strtoupper($element->next_sibling()->children($i)->plaintext));
+
+//                    foreach($temp as $v) {
+//                        $instrument[] = trim($v);
+//                    }
+
+                    $instrument[] = str_replace(' ', '_', trim($temp[sizeof($temp) - 1]));
+
                     $i++;
                 }
             }
@@ -226,13 +313,15 @@ function getApp($appName){
 
         if($element->plaintext == "Publications"){
 
-            $element = skipComment($element, "ul");
+            if($element->next_sibling()->tag != null){
+                $element = skipComment($element, "ul");
 
-            if($element->next_sibling()->tag == "ul"){
-                $i = 0;
-                while($element->next_sibling()->children($i)->tag == "li") {
-                    $publications[] = $element->next_sibling()->children($i)->plaintext;
-                    $i++;
+                if($element->next_sibling()->tag == "ul"){
+                    $i = 0;
+                    while($element->next_sibling()->children($i)->tag == "li") {
+                        $publications[] = $element->next_sibling()->children($i)->plaintext;
+                        $i++;
+                    }
                 }
             }
         }
@@ -312,6 +401,11 @@ function getApp($appName){
     $item['id'] = $appName;
     $item['name'] = $title;
     $item['version'] = $version;
+
+    if($logo == "" || $logo == null){
+        $imagePath = $host;
+        $logo = "img/default_app.png";
+    }
     $item['logo_large'] = $imagePath.$logo;
     $item['short_description'] = $short_description;
     $item['abstract'] = $description;
@@ -322,11 +416,11 @@ function getApp($appName){
     $item['website'] = $website;
     $item['instruction'] = $instructions;
     $item['installation'] = $installation;
-    $item['technologies'] = $technology;
+    $item['functionality'] = $functionality;
     $item['contributors'] = $contributor;
-    $item['analysis']= $analysis;
+    $item['approaches']= $approaches;
+    $item['instrument']= $instrument;
     $item['git_repo'] = $gitRepo;
-
 
     $json['data'][] = $item;
     //echo json_encode($json);
