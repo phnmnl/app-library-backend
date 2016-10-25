@@ -263,7 +263,7 @@ function getApp($appName){
 //                        $functionality[] = "/";
 //                    }
 
-                    $functionality[] = trim($temp[sizeof($temp) - 1]);
+                    $functionality[] = preg_replace('/\s+/', '_', trim($temp[sizeof($temp) - 1]));
 //                    $temp = preg_replace('/\s+/', '', $temp);
 //                    $functionality[] = $temp;
                     $i++;
@@ -284,7 +284,7 @@ function getApp($appName){
 //                        $approaches[] = trim($v);
 //                    }
 
-                    $approaches[] = trim($temp[sizeof($temp) - 1]);
+                    $approaches[] = preg_replace('/\s+/', '_', trim($temp[sizeof($temp) - 1]));
 
                     $i++;
                 }
@@ -304,7 +304,7 @@ function getApp($appName){
 //                        $instrument[] = trim($v);
 //                    }
 
-                    $instrument[] = str_replace(' ', '_', trim($temp[sizeof($temp) - 1]));
+                    $instrument[] = preg_replace('/\s+/', '_', trim($temp[sizeof($temp) - 1]));
 
                     $i++;
                 }

@@ -4,4 +4,5 @@ https://github.com/phnmnl/container-multivariate.git
 https://github.com/phnmnl/container-soap-nmr.git
 https://github.com/phnmnl/container-midcor.git
 https://github.com/phnmnl/container-iso2flux.git
+https://github.com/phnmnl/container-isodyn.git
 
