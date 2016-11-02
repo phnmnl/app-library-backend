@@ -95,9 +95,8 @@ function getAppWithTechnology($technology, $approaches, $instrument) {
 
     foreach ($data['data'] as $appName){
 
+        $appName = substr($appName, 10); //always prefix with 'container-'
         if(file_exists(getPath($appName))) {
-            $appName = substr($appName, 10); //always prefix with 'container-'
-
             $app = getApp($appName);
 
             $server1 = array_unique($app['functionality']);
@@ -150,6 +149,7 @@ function getAppWithResponse($appName) {
     $json['result'] = 1;
     $json['data'] = [];
     if(!is_numeric($appName)){
+        $appName = substr($appName, 10); //always prefix with 'container-'
         if(file_exists(getPath($appName))) {
             $json['data'][] = getApp($appName);
         }
