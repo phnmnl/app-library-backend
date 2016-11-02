@@ -46,7 +46,6 @@ function getAllApp(){
 
 
     foreach ($data['data'] as $appName){
-        print_r($appName);
         $appName = substr($appName, 10); //always prefix with 'container-'
 
         $json['data'][] = getApp($appName);
@@ -95,6 +94,10 @@ function getAppWithTechnology($technology, $approaches, $instrument) {
         $appName = substr($appName, 10); //always prefix with 'container-'
 
         $app = getApp($appName);
+
+        if($app == null){
+            continue;
+        }
 
         $server1 = array_unique($app['functionality']);
         $server2 = array_unique($app['approaches']);
@@ -145,7 +148,10 @@ function getAppWithResponse($appName) {
     $json['result'] = 1;
     $json['data'] = [];
     if(!is_numeric($appName)){
-        $json['data'][] = getApp($appName);
+        $result = getApp($appName);
+        if($result != null){
+            $json['data'][] = $result;
+        }
     } else {
         $json['data'][] = getAppDBApp($appName);
     }
@@ -162,7 +168,11 @@ function getApp($appName){
 
     $readmePath = $path."/"."container-".$name."/"."README.html";
 
-    $html = file_get_html($readmePath) or die(json_encode(createEmptyJSONDataArray()));
+    if(!file_exists($readmePath)) {
+        return null;
+    }
+
+    $html = file_get_html($readmePath);
 
     $title = "";
     $version = "";
@@ -395,10 +405,10 @@ function getApp($appName){
         }
     }
 
-    $json = [];
-
-    $json['result'] = 1;
-    $json['data'] = [];
+//    $json = [];
+//
+//    $json['result'] = 1;
+//    $json['data'] = [];
 
 
     $item = null;
@@ -426,7 +436,7 @@ function getApp($appName){
     $item['instrument']= $instrument;
     $item['git_repo'] = $gitRepo;
 
-    $json['data'][] = $item;
+//    $json['data'][] = $item;
     //echo json_encode($json);
 
     return $item;
