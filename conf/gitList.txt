@@ -17,6 +17,9 @@ https://github.com/phnmnl/container-nmrmlconv.git
 https://github.com/phnmnl/container-nmrglue.git
 https://github.com/phnmnl/container-nmrpro.git
 https://github.com/phnmnl/container-metfamily.git
+https://github.com/phnmnl/container-mtblisa.git
+https://github.com/phnmnl/container-json2isatab.git
+https://github.com/phnmnl/container-isajson-validator.git
+https://github.com/phnmnl/container-isatab-validator.git
+https://github.com/phnmnl/container-isatab2json.git
 https://github.com/phnmnl/container-metfrag-cli.git
-
-

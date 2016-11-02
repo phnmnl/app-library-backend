@@ -152,7 +152,8 @@ function getAppWithResponse($appName) {
 
 function getApp($appName){
     global $path;
-    $host = "http://".gethostname()."/app-library-backend/";
+//    $host = "http://".gethostname()."/app-library-backend/";
+    $host = "http://phenomenal-h2020.eu/wiki/wiki/app-library-backend/";
     $imagePath = $host."wiki-markdown/container-".$appName."/";
 
     $name = $appName;
