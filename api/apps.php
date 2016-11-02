@@ -91,28 +91,27 @@ function getAppWithTechnology($technology, $approaches, $instrument) {
     }
 
     foreach ($data['data'] as $appName){
-        $appName = substr($appName, 10); //always prefix with 'container-'
 
-        $app = getApp($appName);
+        if(file_exists(getPath($appName))) {
+            $appName = substr($appName, 10); //always prefix with 'container-'
 
-        if($app == null){
-            continue;
-        }
+            $app = getApp($appName);
 
-        $server1 = array_unique($app['functionality']);
-        $server2 = array_unique($app['approaches']);
-        $server3 = array_unique($app['instrument']);
+            $server1 = array_unique($app['functionality']);
+            $server2 = array_unique($app['approaches']);
+            $server3 = array_unique($app['instrument']);
 
-        //print_r(sizeof($client2));
+            //print_r(sizeof($client2));
 
-        $result1 = matchArray($client1, $server1);
-        $result2 = matchArray($client2, $server2);;
-        $result3 = matchArray($client3, $server3);;
+            $result1 = matchArray($client1, $server1);
+            $result2 = matchArray($client2, $server2);;
+            $result3 = matchArray($client3, $server3);;
 
-        $result = $result1 + $result2 + $result3;
+            $result = $result1 + $result2 + $result3;
 
-        if($result > 0){
-            $json['data'][] = $app;
+            if($result > 0){
+                $json['data'][] = $app;
+            }
         }
     }
 
@@ -148,9 +147,8 @@ function getAppWithResponse($appName) {
     $json['result'] = 1;
     $json['data'] = [];
     if(!is_numeric($appName)){
-        $result = getApp($appName);
-        if($result != null){
-            $json['data'][] = $result;
+        if(file_exists(getPath($appName))) {
+            $json['data'][] = getApp($appName);
         }
     } else {
         $json['data'][] = getAppDBApp($appName);
@@ -158,7 +156,7 @@ function getAppWithResponse($appName) {
     echo json_encode($json);
 }
 
-function getApp($appName){
+function getPath($appName){
     global $path;
 //    $host = "http://".gethostname()."/app-library-backend/";
     $host = "http://phenomenal-h2020.eu/wiki/wiki/app-library-backend/";
@@ -168,9 +166,12 @@ function getApp($appName){
 
     $readmePath = $path."/"."container-".$name."/"."README.html";
 
-    if(!file_exists($readmePath)) {
-        return null;
-    }
+    return $readmePath;
+}
+
+function getApp($appName){
+
+    $readmePath = getPath($appName);
 
     $html = file_get_html($readmePath);
 
