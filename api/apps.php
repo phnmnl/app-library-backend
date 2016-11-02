@@ -149,7 +149,6 @@ function getAppWithResponse($appName) {
     $json['result'] = 1;
     $json['data'] = [];
     if(!is_numeric($appName)){
-        $appName = substr($appName, 10); //always prefix with 'container-'
         if(file_exists(getPath($appName))) {
             $json['data'][] = getApp($appName);
         }
