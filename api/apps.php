@@ -47,8 +47,9 @@ function getAllApp(){
 
     foreach ($data['data'] as $appName){
         $appName = substr($appName, 10); //always prefix with 'container-'
-
-        $json['data'][] = getApp($appName);
+        if(file_exists(getPath($appName))) {
+            $json['data'][] = getApp($appName);
+        }
     }
 
 //    foreach (getAllAppDBId() as $appName){
