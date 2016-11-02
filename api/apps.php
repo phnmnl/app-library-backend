@@ -94,32 +94,19 @@ function getAppWithTechnology($technology, $approaches, $instrument) {
 
         $app = getApp($appName);
 
-//        $server = array_unique(array_merge($app['functionality'], $app['approaches'], $app['instrument']));
         $server1 = array_unique($app['functionality']);
         $server2 = array_unique($app['approaches']);
         $server3 = array_unique($app['instrument']);
 
         //print_r(sizeof($client2));
 
-        if(!empty($client1)){
-            $result1 = array_intersect($client1, $server1);
-        } else {
-            $result1 = $server1;
-        }
+        $result1 = matchArray($client1, $server1);
+        $result2 = matchArray($client2, $server2);;
+        $result3 = matchArray($client3, $server3);;
 
-        if(!empty($client2)){
-            $result2 = array_intersect($client2, $server2);
-        } else {
-            $result2 = $server2;
-        }
+        $result = $result1 + $result2 + $result3;
 
-        if(!empty($client3)){
-            $result3 = array_intersect($client3, $server3);
-        } else {
-            $result3 = $server3;
-        }
-
-        if(sizeof($result1) > 0 && sizeof($result2) > 0 && sizeof($result3) > 0){
+        if($result > 0){
             $json['data'][] = $app;
         }
     }
@@ -137,6 +124,19 @@ function getAppWithTechnology($technology, $approaches, $instrument) {
 
     header('Content-Type: application/json');
     echo json_encode($json);
+}
+
+function matchArray($client, $server){
+
+    $result = 0;
+
+    if(!empty($client)){
+
+        $result = sizeof(array_intersect($client, $server));
+
+    }
+
+    return $result;
 }
 
 function getAppWithResponse($appName) {
@@ -314,6 +314,7 @@ function getApp($appName){
         if($element->plaintext == "Publications"){
 
             if($element->next_sibling()->tag != null){
+
                 $element = skipComment($element, "ul");
 
                 if($element->next_sibling()->tag == "ul"){
@@ -383,7 +384,7 @@ function getApp($appName){
         }
 
         if($element->plaintext == "Installation" && $element != null){
-            while($element->next_sibling()->tag != "h2"){
+            while($element->next_sibling() != null && $element->next_sibling()->tag != "h2"){
                 $installation .= $element->next_sibling()->outertext;
                 $installation .= " ";
                 $element = $element->next_sibling();
@@ -429,12 +430,14 @@ function getApp($appName){
 }
 
 function skipComment($element, $tag){
-    while($element->next_sibling()->tag != $tag){
+
+    while($element->next_sibling() != null && $element->next_sibling()->tag != $tag){
         if($element->next_sibling()->tag == "h2"){
             break;
         }
         $element = $element->next_sibling();
     }
+
 
     return $element;
 }

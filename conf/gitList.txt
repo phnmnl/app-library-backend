@@ -5,4 +5,18 @@ https://github.com/phnmnl/container-soap-nmr.git
 https://github.com/phnmnl/container-midcor.git
 https://github.com/phnmnl/container-iso2flux.git
 https://github.com/phnmnl/container-isodyn.git
+https://github.com/phnmnl/container-biosigner.git
+https://github.com/phnmnl/container-lcmsmatching.git
+https://github.com/phnmnl/container-phenomenal-branded-galaxy.git
+https://github.com/phnmnl/container-galaxy-k8s-runtime.git
+https://github.com/phnmnl/container-ipo.git
+https://github.com/phnmnl/container-mtbl-labs-uploader.git
+https://github.com/phnmnl/container-scp-aspera.git
+https://github.com/phnmnl/container-mzml2isa.git
+https://github.com/phnmnl/container-nmrmlconv.git
+https://github.com/phnmnl/container-nmrglue.git
+https://github.com/phnmnl/container-nmrpro.git
+https://github.com/phnmnl/container-metfamily.git
+https://github.com/phnmnl/container-metfrag-cli.git
+
 
