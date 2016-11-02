@@ -44,7 +44,9 @@ function getAllApp(){
     $json['result'] = 1;
     $json['data'] = [];
 
+
     foreach ($data['data'] as $appName){
+        print_r($appName);
         $appName = substr($appName, 10); //always prefix with 'container-'
 
         $json['data'][] = getApp($appName);
