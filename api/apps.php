@@ -14,7 +14,6 @@ error_reporting(E_ERROR | E_PARSE);
 $path = "../wiki-html";
 //    $host = "http://".gethostname()."/app-library-backend/";
 $host = "http://phenomenal-h2020.eu/wiki/wiki/app-library-backend/";
-$imagePath = $host."wiki-markdown/container-".$appName."/";
 
 switch($_SERVER['REQUEST_METHOD']) {
     case 'GET':
@@ -172,7 +171,7 @@ function getPath($appName){
 
 function getApp($appName){
     global $host;
-    global $imagePath;
+    $imagePath = $host."wiki-markdown/container-".$appName."/";
 
     $readmePath = getPath($appName);
 
